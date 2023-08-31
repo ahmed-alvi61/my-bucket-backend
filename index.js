@@ -2,6 +2,7 @@ const express = require('express');
 var cors = require('cors');
 const user_routes = require('../backend/routes/userRoutes')
 const connectionPromise = require('./config/dbclient');
+require("dotenv").config();
 const port = process.env.PORT;
 
 const app = express();
