@@ -1,6 +1,6 @@
 const express = require('express');
 var cors = require('cors');
-const user_routes = require('../server/routes/userRoutes')
+const user_routes = require('../backend/routes/userRoutes')
 const connectionPromise = require('./config/dbclient');
 const port = process.env.PORT;
 
