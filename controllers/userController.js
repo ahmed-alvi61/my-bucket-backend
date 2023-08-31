@@ -1,7 +1,5 @@
 const userModel = require('../models/usermodel')
-const Jwt = require("jsonwebtoken");
 const productModel = require('../models/productmodel')
-const config = require('../config/config')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
 
@@ -64,14 +62,8 @@ const register_user = async (req, res) => {
             return res.status(400).json({ success: false, msg: "This email is already registered" });
         }
         const user_data = await user.save();
-        Jwt.sign({ result }, config, { expiresIn: "2h" }, (err, token) => {
-            if (err) {
-              res.send({ result: "Something went wrong " });
-            }
-            result.success = true;
-            res.send({ result, auth: token });
-          })
-        return res.status(201).json({ success: true, data: user_data });
+        const token = await generateJwtToken(user_data);
+        return res.status(201).json({ success: true, data: user_data, auth: token });
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ success: false, error: "An error occurred while registering the user." });
@@ -93,8 +85,9 @@ const login_user = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ result: 'Invalid password', success: false });
         }
-        const token = Jwt.sign({ user }, jwtKey, { expiresIn: '2h' });
-        res.json({ user: { ...user.toObject(), password: undefined }, auth: token, success: true });
+        const token = generateJwtToken(user);
+        const userWithoutPassword = { ...user.toObject(), password: undefined };
+        res.json({ user: userWithoutPassword, auth: token, success: true });
         res.send(user)
     } catch (error) {
         console.error(error);
