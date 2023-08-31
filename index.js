@@ -2,6 +2,7 @@ const express = require('express');
 var cors = require('cors');
 const user_routes = require('../server/routes/userRoutes')
 const connectionPromise = require('./config/dbclient');
+const port = process.env.PORT;
 
 const app = express();
 app.use(express.json());
@@ -17,4 +18,4 @@ connectionPromise.then(() => {
 
 app.use('/api', user_routes)
 
-app.listen(3009, () => console.log('Port is listening '));
+app.listen(port, () => console.log('Port is listening '));
